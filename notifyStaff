@@ -1,4 +1,4 @@
--- Leaked by collin full source
+ Leaked by collin full source
 
 --CONFIG
 getgenv().webhook = "https://discord.com/api/webhooks/1412605130896965662/eCjBaGTJfaki2Ormn6QXWPwGckwuRWMX3w2af6AVUUjrOznCxZoBJX9ZLPP-Ew61u-vw"
@@ -21,10 +21,11 @@ getgenv().TargetPetNames = {
     "Ballerino Lololo", "Trenostruzzo Turbo 3000", "Trippi Troppi Troppa Trippa",
     "Piccione Macchina", "Bulbito Bandito Traktorito", "Los Crocodillitos", "Orcalero Orcala",
     "Pakrahmatmamat", "Tipi Topi Taco", "Alessio", "Tukanno Bananno", "Los Tungtungtungcitos",
-    "Las Tralaleritas, "Los Tralaleritos", "Chimpanzini Spiderini", "La Vacca Staturno Saturnita",
+    "Las Tralaleritas", "Los Tralaleritos", "Chimpanzini Spiderini", "La Vacca Staturno Saturnita",
     "Bombardini Tortinii", "Karkerkar Kurkur", "Agarrini la Palini", "Las Vaquitas Saturnitas",
     "Tortuginni Dragonfruitini", "Nooo My Hotspot", "Blackhole Goat", "Dul Dul Dul", "Esok Sekolah",
     "Los Hotspotsitos", "La Supreme Combinasion", "Ketupat Kepat",
+}
    
 }
 
