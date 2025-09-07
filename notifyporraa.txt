@@ -1,0 +1,161 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+getgenv().webhook = "https://discord.com/api/webhooks/1412605130896965662/eCjBaGTJfaki2Ormn6QXWPwGckwuRWMX3w2af6AVUUjrOznCxZoBJX9ZLPP-Ew61u-vw"
+getgenv().TargetPetNames = {
+    "Graipuss Medussi", "La Grande Combinasion", 
+	"Garama and Madundung", 
+	"Sammyni Spyderini", 
+	"Pot Hotspot", 
+	"Nuclearo Dinossauro", 
+	"Chicleteira Bicicleteira", 
+	"Los Combinasionas", 
+	"Dragon Cannelloni", 
+	"Unclito Samito", 
+	"Los Matteo", 
+	"tartaruga cisterna", 
+	"Tralalero Tralala", 
+	"Crabbo Limonetta", 
+	"Tralalita Tralala", 
+	"Urubini Flamenguini", 
+	"Los Orcalitos", 
+	"Ballerino Lololo", 
+	"Trenostruzzo Turbo 3000", 
+	"Trippi Troppi Troppa Trippa", 
+	"Piccione Macchina", 
+	"Bulbito Bandito Traktorito", 
+	"Los Crocodillitos", 
+	"Orcalero Orcala", 
+	"Pakrahmatmamat", 
+	"Tipi Topi Taco", 
+	"Alessio", 
+	"Tukanno Bananno", 
+	"Los Tungtungtungcitos", 
+	"Las Tralaleritas", 
+	"Los Tralaleritos", 
+	"Chimpanzini Spiderini", 
+	"La Vacca Staturno Saturnita", 
+	"Bombardini Tortinii", 
+	"Karkerkar Kurkur", 
+	"Agarrini la Palini", 
+	"Las Vaquitas Saturnitas", 
+	"Tortuginni Dragonfruitini", 
+	"Nooo My Hotspot", 
+	"Blackhole Goat", 
+	"Dul Dul Dul", 
+	"Esok Sekolah", 
+	"Los Hotspotsitos", 
+	"La Supreme Combinasion", 
+	"Ketupat Kepat", 
+}
+
+local gui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+gui.Name = "PetNotifierGUI"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 350, 0, 500)
+frame.Position = UDim2.new(0.6, 0, 0.2, 0)
+frame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+frame.Active = true
+frame.Draggable = true
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1,0,0,40)
+title.BackgroundTransparency = 1
+title.Text = "🐾 Pet Notifier"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 22
+title.TextColor3 = Color3.new(1,1,1)
+
+local petsList = Instance.new("ScrollingFrame", frame)
+petsList.Size = UDim2.new(1,-10,1,-50)
+petsList.Position = UDim2.new(0,5,0,45)
+petsList.BackgroundColor3 = Color3.fromRGB(45,45,45)
+petsList.ScrollBarThickness = 6
+Instance.new("UICorner", petsList).CornerRadius = UDim.new(0,8)
+
+local uiLayout = Instance.new("UIListLayout", petsList)
+uiLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiLayout.Padding = UDim.new(0,4)
+
+local activePets = {}
+for _, petName in ipairs(getgenv().TargetPetNames) do
+    activePets[petName] = true
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1,0,0,30)
+    btn.BackgroundColor3 = Color3.fromRGB(0,200,0)
+    btn.Text = petName
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 14
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Parent = petsList
+    btn.MouseButton1Click:Connect(function()
+        activePets[petName] = not activePets[petName]
+        btn.BackgroundColor3 = activePets[petName] and Color3.fromRGB(0,200,0) or Color3.fromRGB(100,100,100)
+    end)
+end
+
+local function buildJoinLink(placeId, jobId)
+    return string.format("https://chillihub1.github.io/chillihub-joiner/?placeId=%d&gameInstanceId=%s", placeId, jobId)
+end
+
+local function sendWebhook(foundPets, jobId)
+    local filtered = {}
+    for _, pet in ipairs(foundPets) do
+        if activePets[pet] then
+            table.insert(filtered, pet)
+        end
+    end
+    if #filtered == 0 then return end
+    local petCounts = {}
+    for _, pet in ipairs(filtered) do
+        petCounts[pet] = (petCounts[pet] or 0) + 1
+    end
+    local formattedPets = {}
+    for petName, count in pairs(petCounts) do
+        table.insert(formattedPets, petName .. (count>1 and " x"..count or ""))
+    end
+    local joinLink = buildJoinLink(game.PlaceId, jobId)
+    local embedData = {
+        username="Notificador de pets",
+        embeds={{title="🐾 Pet(s) Found!", description="**Pet(s):**\n"..table.concat(formattedPets,"\n"), color=65280,
+        fields={
+            {name="Players", value=string.format("%d/%d", #Players:GetPlayers(), Players.MaxPlayers), inline=true},
+            {name="Job ID", value=jobId, inline=true},
+            {name="Join Link", value=string.format("[Click to join server](%s)", joinLink), inline=false}
+        },
+        footer={text="**Notificador De pets**"}, timestamp=DateTime.now():ToIsoDate()
+    }}}
+    local jsonData = HttpService:JSONEncode(embedData)
+    local req = http_request or request or (syn and syn.request)
+    if req then
+        pcall(function() req({Url=getgenv().webhook, Method="POST", Headers={["Content-Type"]="application/json"}, Body=jsonData}) end)
+    elseif HttpService.HttpEnabled then
+        pcall(function() HttpService:PostAsync(getgenv().webhook, jsonData, Enum.HttpContentType.ApplicationJson) end)
+    end
+end
+
+local function checkForPets()
+    local found = {}
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") then
+            local nameLower = string.lower(obj.Name)
+            for _, target in ipairs(getgenv().TargetPetNames) do
+                if string.find(nameLower,string.lower(target)) then
+                    table.insert(found,obj.Name)
+                    break
+                end
+            end
+        end
+    end
+    return found
+end
+
+task.spawn(function()
+    while true do
+        local petsFound = checkForPets()
+        sendWebhook(petsFound, game.JobId)
+        task.wait(15)
+    end
+end)
